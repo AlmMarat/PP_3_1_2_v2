@@ -17,7 +17,7 @@ public class RoleServiceImp implements RoleService {
         this.roleRepository = roleRepository;
     }
 
-    public Set<Role> findAll() {
+    public Set<Role> allRoles() {
         return new HashSet<>(roleRepository.findAll());
     }
 
@@ -28,4 +28,10 @@ public class RoleServiceImp implements RoleService {
     public void save(Role role) {
         roleRepository.save(role);
     }
+
+    public Set<Role> findById(Long[] id) {
+        return roleRepository.getRolesById(id);
+    }
+
+
 }

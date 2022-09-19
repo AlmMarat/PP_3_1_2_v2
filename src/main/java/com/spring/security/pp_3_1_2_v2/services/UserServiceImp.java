@@ -2,9 +2,9 @@ package com.spring.security.pp_3_1_2_v2.services;
 
 import com.spring.security.pp_3_1_2_v2.entities.User;
 import com.spring.security.pp_3_1_2_v2.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class UserServiceImp implements UserDetailsService, UserService {
+public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
     public UserServiceImp(UserRepository userRepository, @Lazy PasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -49,11 +50,7 @@ public class UserServiceImp implements UserDetailsService, UserService {
         return userRepository.findByUsername(username);
     }
 
-    public User findByUsername(String email) {
-        return userRepository.findByUsername(email);
-    }
-
-    public User findByEmail(String email) {
+    public User findByUser(String email) {
         return userRepository.findByUsername(email);
     }
 }

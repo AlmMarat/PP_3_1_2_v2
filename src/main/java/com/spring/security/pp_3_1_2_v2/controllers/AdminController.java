@@ -1,20 +1,15 @@
 package com.spring.security.pp_3_1_2_v2.controllers;
 
-import com.spring.security.pp_3_1_2_v2.entities.Role;
 import com.spring.security.pp_3_1_2_v2.entities.User;
 import com.spring.security.pp_3_1_2_v2.services.RoleService;
 import com.spring.security.pp_3_1_2_v2.services.UserService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -26,43 +21,51 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping("/admin")
-    public String showAllUsers(@NotNull Model model) {
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-        return "users";
-    }
-    @GetMapping("/admin/addUserForm")
-    public String addUserForm(@ModelAttribute("newUser") User user, @NotNull Model model) {
-        model.addAttribute("roles", roleService.findAll());
-        return "newUser";
+    @GetMapping()
+    public String getAllUsers(Model model) {
+        model.addAttribute("users", userService.findAll());
+        return "admin/users";
     }
 
-    @PostMapping("/admin/addUser")
-    public String addUser(@ModelAttribute("newUser") @NotNull User user,
-                          @RequestParam(value = "roles", required = false) Set<Role> roles) {
-        user.setRoleSet(roles);
+    @GetMapping("/new")
+    public String newUser(Model model) {
+        model.addAttribute("user", new User());
+        model.addAttribute("allRoles", roleService.allRoles());
+        return "admin/newUser";
+    }
+
+    @PostMapping
+    public String createUser(@RequestParam("roles") Long[] roleId,
+                             @ModelAttribute("user") User user) {
+        user.setRoles(roleService.findById(roleId));
         userService.saveUser(user);
         return "redirect:/admin";
     }
 
-    @DeleteMapping("/admin/deleteUser/{id}")
-    public String delete(@PathVariable("id") long id) {
+
+    @GetMapping("/{id}/edit")
+    public String editUser(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("allRoles", roleService.allRoles());
+        model.addAttribute("user", userService.findById(id));
+        return "admin/updateUser";
+    }
+
+    @PatchMapping("/{id}")
+    public String updateUser(@RequestParam("roles") Long[] roleId, @ModelAttribute("user") User user, @PathVariable("id") Long id) {
+        user.setRoles(roleService.findById(roleId));
+        userService.saveUser(user);
+        return "redirect:/admin";
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
         userService.deleteById(id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/update/{id}")
-    public String update(@NotNull Model model, @PathVariable("id") Long id) {
-        User user = userService.findById(id);
-        model.addAttribute("userToUpdate", user);
-        model.addAttribute("roles", roleService.findAll());
-        return "updateUser";
-    }
-    @PatchMapping("/admin/updateUser")
-    public String updateUser(@NotNull User user, @RequestParam(value = "roles", required = false) Set<Role> roles) {
-        user.setRoleSet(roles);
-        userService.saveUser(user);
-        return "redirect:/admin";
+    @GetMapping("/{id}")
+    public String getUserById(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("user", userService.findById(id));
+        return "admin/show";
     }
 }

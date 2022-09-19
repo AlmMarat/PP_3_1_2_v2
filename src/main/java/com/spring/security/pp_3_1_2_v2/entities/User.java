@@ -2,10 +2,7 @@ package com.spring.security.pp_3_1_2_v2.entities;
 
 import lombok.Data;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,26 +11,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
 @Data
 public class User implements UserDetails {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "userName")
+    @Column(name = "username")
     private String username;
-
-    @Column(name = "firstname")
-    private String firstName;
-
-    @Column(name = "lastname")
-    private String lastName;
 
     @Column(name = "email")
     private String email;
@@ -41,15 +30,13 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
-
     )
-    @Fetch(FetchMode.JOIN)
-    private Collection<Role> roleSet = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -57,12 +44,11 @@ public class User implements UserDetails {
         this.username = username;
         this.password = password;
     }
+
     @Transactional
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roleSet.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+        return getRoles();
     }
 
     @Override
@@ -87,7 +73,7 @@ public class User implements UserDetails {
     }
 
     public void addRole(Role role) {
-        roleSet.add(role);
+        this.getRoles().add(role);
     }
 
     @Override
@@ -107,11 +93,10 @@ public class User implements UserDetails {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", roleList=" + roleSet +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
                 '}';
     }
-
 }

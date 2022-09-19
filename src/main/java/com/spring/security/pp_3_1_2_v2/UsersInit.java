@@ -36,16 +36,10 @@ public class UsersInit {
         user2.addRole(roleService.findByName("ROLE_ADMIN"));
         user3.addRole(roleService.findByName("ROLE_USER"));
 
-        user3.setFirstName("Irina");
-        user3.setLastName("Ivanova");
         user3.setEmail("irina@mail.ru");
 
-        user1.setFirstName("Oleg");
-        user1.setLastName("Smirnov");
         user1.setEmail("oleg@mail.ru");
 
-        user2.setFirstName("Inna");
-        user2.setLastName("Averina");
         user2.setEmail("inna@mail.ru");
 
         userService.saveUser(user1);

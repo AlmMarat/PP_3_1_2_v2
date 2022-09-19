@@ -11,17 +11,12 @@
     <table>
         <tr><h1 th:text = "*{username}"></h1></tr>
 
-        <tr><h1 th:text = "*{firstName}"></h1></tr>
-
-        <tr><h1 th:text = "*{lastName}"></h1></tr>
-
         <tr><h1 th:text = "*{email}"></h1></tr>
-
     </table>
 
 
 </form>
-<form th:action="@{/logout}" method="post">
+<form th:action="@{/logout}" method="POST">
     <input type="submit" value="Logout"/>
 </form>
 
