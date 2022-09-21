@@ -3,6 +3,7 @@ package com.spring.security.pp_3_1_2_v2.controllers;
 import com.spring.security.pp_3_1_2_v2.entities.User;
 import com.spring.security.pp_3_1_2_v2.services.RoleService;
 import com.spring.security.pp_3_1_2_v2.services.UserService;
+import com.spring.security.pp_3_1_2_v2.services.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,7 +54,7 @@ public class AdminController {
     @PatchMapping("/{id}")
     public String updateUser(@RequestParam("roles") Long[] roleId, @ModelAttribute("user") User user, @PathVariable("id") Long id) {
         user.setRoles(roleService.findById(roleId));
-        userService.saveUser(user);
+        userService.updateUser(user);
         return "redirect:/admin";
     }
 
